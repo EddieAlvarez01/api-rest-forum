@@ -16,4 +16,9 @@ userSchema.methods.encryptPassword = async (password) => {
     return await bcrypt.hash(password, salt);
 };
 
+//VALIDACION DE LA CONTRASEÑA PARA EL INICIO DE SESION
+userSchema.methods.validatePassword = async (password, hash) => {
+    return await bcrypt.compare(password, hash);
+};
+
 module.exports = model('User', userSchema);
