@@ -52,7 +52,7 @@ const controller = {
                     if(await user.validatePassword(password, user.password)){   //VALIDAR CONTRASEÑA
                         
                         //SESION VALIDA SE GENERA EL TOKEN
-                        const token = jwt.generateToken({sub: user._id, role: user.role, iat: moment().unix()}, 60 * 60 * 24 * 2);
+                        const token = await jwt.generateToken({sub: user._id, role: user.role, iat: moment().unix()}, 60 * 60 * 24 * 2);
                         
                         //LIMPIAR LA PASSWORD PARA QUE NO SE VAYA AL FRONT
                         user.password = undefined;

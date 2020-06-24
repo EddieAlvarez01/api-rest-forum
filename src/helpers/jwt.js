@@ -3,7 +3,7 @@ const config = require('../config');
 
 module.exports = {
 
-    generateToken: (payload, exp) => {
+    generateToken: async (payload, exp) => {
         try{
             return  jwt.sign(payload, config.secret, {expiresIn: exp});
         }catch(error){
