@@ -6,14 +6,18 @@ module.exports = {
     //VALIDAR NOMBRE DE USUARIO
     name_user: async (name) => {
         const errorArray = [];
-        if(validator.isEmpty(name, {ignore_whitespace: true})){
+        try{
+            if(validator.isEmpty(name, {ignore_whitespace: true})){
+                errorArray.push('El nombre es requerido');
+            }
+            if(!validator.isAlphanumeric(name)){
+                errorArray.push('El nombre no es alfanumerico');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        }catch(error){
             errorArray.push('El nombre es requerido');
-        }
-        if(!validator.isAlphanumeric(name)){
-            errorArray.push('El nombre no es alfanumerico');
-        }
-        if(errorArray.length == 0){
-            return null;
         }
         return errorArray;
     },
@@ -21,14 +25,18 @@ module.exports = {
     //VALIDAR APELLIDO
     surname_user: async(surname) => {
         const errorArray = [];
-        if(validator.isEmpty(surname, {ignore_whitespace: true})){
+        try{
+            if(validator.isEmpty(surname, {ignore_whitespace: true})){
+                errorArray.push('El apellido es requerido');
+            }
+            if(!validator.isAlphanumeric(surname)){
+                errorArray.push('El apellido debe ser alfanumerico');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        }catch(error){
             errorArray.push('El apellido es requerido');
-        }
-        if(!validator.isAlphanumeric(surname)){
-            errorArray.push('El apellido debe ser alfanumerico');
-        }
-        if(errorArray.length == 0){
-            return null;
         }
         return errorArray;
     },
@@ -36,14 +44,18 @@ module.exports = {
     //VALIDAR CORREO DE UN USUARIO
     email_user: async(email) => {
         const errorArray = [];
-        if(validator.isEmpty(email, {ignore_whitespace: true})){
+        try{
+            if(validator.isEmpty(email, {ignore_whitespace: true})){
+                errorArray.push('El apellido es requerido');
+            }
+            if(!validator.isEmail(email)){
+                errorArray.push('El formato del correo es inválido');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        }catch(error){
             errorArray.push('El apellido es requerido');
-        }
-        if(!validator.isEmail(email)){
-            errorArray.push('El formato del correo es inválido');
-        }
-        if(errorArray.length == 0){
-            return null;
         }
         return errorArray;
     },
@@ -51,13 +63,25 @@ module.exports = {
     //VALIDAR CONTRASEÑA DE UN USUARIO
     password_user: async(password) => {
         const errorArray = [];
-        if(validator.isEmpty(password)){
-            errorArray.push('El apellido es requerido');
-        }
-        if(errorArray.length == 0){
-            return null;
+        try {
+            if(validator.isEmpty(password)){
+                errorArray.push('La contraseña es requerida');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        } catch (error) {
+            errorArray.push('La contraseña es requerida');
         }
         return errorArray;
+    },
+
+    //VALIDAR UNA IMAGEN
+    image_user: async (mimetype) => {
+        if(mimetype === 'image/gif' || mimetype === 'image/png' || mimetype === 'image/jpeg' || mimetype === 'image/webp'){
+            return null;
+        }
+        return ['El tipo de archivo no es una imagen'];
     }
 
 };
