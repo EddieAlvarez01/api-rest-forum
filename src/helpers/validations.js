@@ -82,6 +82,54 @@ module.exports = {
             return null;
         }
         return ['El tipo de archivo no es una imagen'];
+    },
+
+    //VALIDAR TITULO DEL TOPIC
+    title_topic: async (title) => {
+        const errorArray = [];
+        try{
+            if(validator.isEmpty(title, {ignore_whitespace: true})){
+                errorArray.push('El titulo es requerido');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        }catch(error){
+            errorArray.push('El titulo es requerido');
+        }
+        return errorArray;
+    },
+
+    //VALIDAR CONTENIDO DE UN TOPIC
+    content_topic: async(content) => {
+        const errorArray = [];
+        try {
+            if(validator.isEmpty(content, {ignore_whitespace: true})){
+                errorArray.push('El contenido es requerido');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        } catch (error) {
+            errorArray.push('El contenido es requerido');
+        }
+        return errorArray;
+    },
+
+    //VALIDAR LENGUAJE
+    lang_topic: async(lang) => {
+        const errorArray = [];
+        try {
+            if(validator.isEmpty(lang, {ignore_whitespace: true})){
+                errorArray.push('El lenguaje es requerido');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        } catch (error) {
+            errorArray.push('El lenguaje es requerido');
+        }
+        return errorArray;
     }
 
 };

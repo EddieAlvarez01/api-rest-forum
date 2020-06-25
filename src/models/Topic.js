@@ -1,7 +1,11 @@
 const {Schema, model} = require('mongoose');
 
 //ESQUEMA PARA SUBDOCUMENTOS
-const comment = require('./Comment');
+const commentSchema = new Schema({
+    content: String,
+    date: {type: Date, default: Date.now},
+    user: {type: Schema.ObjectId, ref: 'User'}
+});
 
 const topicSchema = new Schema({
     title: String,
@@ -10,7 +14,7 @@ const topicSchema = new Schema({
     lang: String,
     date: {type: Date, default: Date.now},
     user: {type: Schema.ObjectId, ref: 'User'},
-    comments: [comment]
+    comments: [commentSchema]
 });
 
 module.exports = model('Topic', topicSchema);
