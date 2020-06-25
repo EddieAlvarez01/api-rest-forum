@@ -1,4 +1,5 @@
 const {Schema, model} = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 //ESQUEMA PARA SUBDOCUMENTOS
 const commentSchema = new Schema({
@@ -16,5 +17,7 @@ const topicSchema = new Schema({
     user: {type: Schema.ObjectId, ref: 'User'},
     comments: [commentSchema]
 });
+
+topicSchema.plugin(mongoosePaginate);   //PAGINACION
 
 module.exports = model('Topic', topicSchema);

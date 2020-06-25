@@ -12,6 +12,16 @@ module.exports = {
             const extension = file.originalname.split(".");
             cb(null, file.fieldname + '-' + Date.now() + '.' + (extension[extension.length - 1]))
         } 
-    })
+    }),
+
+    //CONFIGURACION DE PAGINACION DE LOS TOPICS
+    optionsTopics: async (limit, page) => {
+        return {
+            sort: {date: -1},
+            limit: limit,
+            populate: {path: 'user', select: '-__v -password -role'},
+            page: page
+        }
+    }
 
 };
