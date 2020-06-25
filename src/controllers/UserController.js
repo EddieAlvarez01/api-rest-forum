@@ -4,6 +4,7 @@ const moment = require('moment');
 const jwt = require('../helpers/jwt');
 const file = require('../helpers/image_manipulation');
 const path = require('path');
+const fs = require('fs');
 
 
 const controller = {
@@ -28,8 +29,8 @@ const controller = {
                 const findUser = await User.findOne({email: user.email});   //SACAR EL USUARIO CON ESE EMAIL
                 if(!findUser){      //VERIFICAR DUPLICIDAD DE CORREOS
                     user.password = await user.encryptPassword(user.password);  //ENCRIPTAR CONTRASEÑA
-                    const userStore = await user.save();    //GUARDAR EN LA DB
-                    return res.json({'user': userStore});
+                    await user.save();    //GUARDAR EN LA DB
+                    return res.json({message: 'Usuario registrado exitosamente'});
                 }
                 return res.status(400).json({'message': 'El correo ya esta registrado en otra cuenta'});
             }catch(error){
@@ -51,7 +52,7 @@ const controller = {
                 if(user){       //SI ES NULL, EL CORREO ES INCORRECTO
                     if(await user.validatePassword(password, user.password)){   //VALIDAR CONTRASEÑA
                         
-                        //SESION VALIDA SE GENERA EL TOKEN
+                        //SESION VALIDA SE GENERA EL TOKEN (2 DIAS)
                         const token = await jwt.generateToken({sub: user._id, role: user.role, iat: moment().unix()}, 60 * 60 * 24 * 2);
                         
                         //LIMPIAR LA PASSWORD PARA QUE NO SE VAYA AL FRONT
@@ -132,6 +133,46 @@ const controller = {
             await file.deleteImage(image.path);
         }
         return res.status(400).json({errors: {validation_name, validation_surname, validation_email, validation_image}});
+    },
+
+    //TRAER IMAGEN DEL USUARIO
+    getImage: async (req, res) => {
+        const{filename} = req.params;
+        const pathFile =  path.join(__dirname, '../uploads/users/' + filename);
+        try{
+
+            //VER SI EXISTE LA IMAGEN
+            fs.accessSync(pathFile);
+        }catch(error){
+            return res.status(404).json({message: 'No existe la imagen'});
+        }
+        return res.sendFile(pathFile); 
+    },
+
+    //SACAR TODOS LOS USUARIOS
+    getAll: async (req, res) => {
+        try{
+            const users = await User.find().select('-__v -password');
+            return res.json({users: users});
+        }catch(error){
+            console.error(error);
+        }
+        return res.status(500).json({message: 'Error en el servidor'});
+    },
+
+    //SACAR UN USUARIO EN ESPECIFICO
+    getById: async (req, res) => {
+        const {id} = req.params;
+        try{
+            const user = await User.findOne(id).select('-__v -password');
+            if(!user){      //SI EL USUARIO NO EXISTE
+                return res.status(404).json({message: 'El usuario no existe'});
+            }
+            res.json({user: user});
+        }catch(error){
+            console.log(error);
+        }
+        res.status(500).json({message: 'Error en el servidor'});
     }
 
 };
