@@ -55,6 +55,86 @@ const controller = {
             console.log(error);
         }
         return res.status(500).json({message: 'Error en el servidor'});
+    },
+
+    //SACAR LOS TOPICS DE UN USUARIO
+    getByUser: async (req, res) => {
+        const {id} = req.params;
+        try{
+            const topics = await Topic.find({user: id}).sort({date: 'desc'});
+            return res.json({topics});
+        }catch(error){
+            console.log(error);
+        }
+        return res.status(500).json({message: 'Error en el servidor'});
+    },
+
+    //SACAR UN TOPIC POR ID
+    getById: async (req, res) => {
+        const {id} = req.params;
+        try{
+            const topic = await Topic.findById(id).populate({path: 'user', select: '-__v -password -role'});
+            if(!topic){
+                //NO EXISTE EL TOPIC
+                return res.status(404).json({message: 'El topic no existe'});
+            }
+            return res.json({topic});
+        }catch(error){
+            console.log(error);
+        }
+        return res.status(500).json({message: 'Error en el servidor'});
+    },
+
+    //ACTUALIZAR UN TOPIC
+    update: async (req, res) => {
+        const {title, content, lang, code} = req.body;
+        const {id} = req.params;
+        const validate_title = await validator.title_topic(title);
+        const validate_content = await validator.content_topic(content);
+        const validate_lang = await validator.lang_topic(lang);
+        if(validate_title || validate_content || validate_lang){
+            //CAMPOS INVALIDOS
+            return res.status(400).json({errors: {validate_title, validate_content, validate_lang}});
+        }
+        const {sub} = req.user;     //ID DEL USUARIO DEL TOKEN
+        try{
+            const exist = await Topic.findById(id);
+            if(!exist){
+                //NO EXISTE EL TOPIC
+                return res.status(404).json({message: 'No existe el topic'});
+            }
+            if(exist.user != sub){
+                //NO ES EL DUEÑO DEL TOPIC
+                return res.status(403).json({message: 'No eres el dueño del topic'});
+            }
+            const topic = await Topic.findOneAndUpdate({_id: id}, {title, content, lang, code}, {new: true});
+            return res.json({topic});
+        }catch(error){
+            console.log(error);
+        }
+        return res.status(500).json('Error en el servidor');
+    },
+
+    //BORRAR UN TOPIC
+    delete: async (req, res) => {
+        const {id} = req.params;
+        try{
+            const exist = await Topic.findById(id);
+            if(!exist){
+                //NO EXISTE EL TOPIC
+                return res.status(404).json({message: 'No existe el topic'});
+            }
+            const {sub} = req.user;     //ID DEL USUARIO
+            if(exist.user != sub){
+                //NO ES EL DUEÑO DEL TOPIC
+                return res.status(403).json({message: 'No es el dueño del topic'});
+            }
+            const topic = await Topic.findOneAndDelete({_id: id});
+            return res.json({message: 'Topic eliminado correctamente', topic});
+        }catch(error){
+            console.log(error);
+        }
+        return res.status(500).json({message: 'Error en el servidor'});
     }
 
 };
