@@ -130,6 +130,22 @@ module.exports = {
             errorArray.push('El lenguaje es requerido');
         }
         return errorArray;
+    },
+
+    //VALIDAR CONTENIDO DE UN COMENTARIO
+    comment_topic: async(content) => {
+        const errorArray = [];
+        try {
+            if(validator.isEmpty(content, {ignore_whitespace: true})){
+                errorArray.push('El contenido del comentario es requerido');
+            }
+            if(errorArray.length == 0){
+                return null;
+            }
+        } catch (error) {
+            errorArray.push('El contenido del comentario es requerido');
+        }
+        return errorArray;
     }
 
 };
