@@ -62,6 +62,29 @@ const controller = {
             console.log(error);
         }
         return res.status(500).json({message: 'Error en el servidor'});
+    },
+
+    //ELIMINAR UN COMENTARIO
+    delete: async (req, res) => {
+        const {id} = req.params;
+        try{
+            const topic = await Topic.findOne({'comments._id': id});
+            if(!topic){
+                //NO EXISTE EL TOPIC
+                return res.status(404).json({message: 'No existe el topic'});
+            }
+            const comment = await topic.comments.id(id);
+            if(comment.user != req.user.sub){
+                //NO ERES EL DUEÑO DEL COMENTARIO
+                return res.status(403).json({message: 'No eres el dueño del comentario'});
+            }
+            await comment.remove(); //BORRAR EL COMENTARIO
+            await topic.save(); //GUARDAR EL TOPIC MODIFICADO
+            return res.json({comment});
+        }catch(error){
+            console.log(error);
+        }
+        return res.status(500).json({message: 'Error en el servidor'});
     }
 
 };
