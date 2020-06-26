@@ -21,4 +21,7 @@ router.put('/update/:id', authMiddleware.auth, TopicController.update);
 //ELIMINAR UN TOPIC
 router.delete('/delete/:id', authMiddleware.auth, TopicController.delete);
 
+//BUSCAR TOPICS POR COINCIDENCIA
+router.get('/search/:coincidence', TopicController.search);
+
 module.exports = router;

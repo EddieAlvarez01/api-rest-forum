@@ -135,6 +135,22 @@ const controller = {
             console.log(error);
         }
         return res.status(500).json({message: 'Error en el servidor'});
+    },
+
+    //BUSCAR TOPICS
+    search: async (req, res) => {
+        const{coincidence} = req.params;
+        try{
+            const topics = await Topic.find({$or: [
+                                        {title: {$regex: coincidence, $options: 'i'}},
+                                        {content: {$regex: coincidence, $options: 'i'}},
+                                        {lang: {$regex: coincidence, $options: 'i'}}
+                                    ]}).populate({path: 'user', select: '-__v -password -role'});
+            return res.json({topics});
+        }catch(error){
+            console.log(error);
+        }
+        return res.status(500).json({message: 'Error en el servidor'});
     }
 
 };
