@@ -13,3 +13,4 @@ _Proyecto personal de una api para practicar NodeJS_
 * [mongoose-paginate-v2](https://www.npmjs.com/package/mongoose-paginate-v2) - Paginación de los blogs
 * [multer](https://www.npmjs.com/package/multer) - Middelware para subida de archivos
 * [validator.js](https://www.npmjs.com/package/validator) - Validaciones de los campos
+* MongoDB - Base de datos
